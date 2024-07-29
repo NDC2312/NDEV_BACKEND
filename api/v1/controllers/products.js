@@ -6,6 +6,5 @@ module.exports.index = async (req, res) => {
     deleted: false,
     status: "active",
   });
-  console.log(products);
-  res.send("oke");
+  res.json();
 };
