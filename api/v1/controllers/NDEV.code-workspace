@@ -1,0 +1,31 @@
+{
+  "folders": [
+	{
+		"path": "../../../../../../NodeJS/LetDoIt"
+	},
+	{
+		"path": "../../../../../../NodeJS/task-management"
+	},
+	{
+		"path": "../../../../../../NodeJS/typescript"
+	},
+	{
+		"path": "../../../../../../Make Video/music"
+	},
+	{
+		"path": "../../../../.."
+	},
+	{
+		"path": "../../../../../../ReactJs/stacrbucks"
+	},
+	{
+		"path": "../../../../../../ReactJs/tiktok"
+	},
+	{
+		"path": "../../../../../../Learn/phuclongbyhanu-main"
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "music"
+  }
+}
