@@ -7,14 +7,15 @@ module.exports.index = async (req, res) => {
     deleted: false,
     status: "active",
   });
-  res.json(products);
   // console.log(products);
+  res.json(products);
 };
 
 // [POST] api/v1/products/create
 module.exports.create = async (req, res) => {
   console.log(req.body);
   const product = new Products(req.body);
+  console.log(product);
   try {
     await product.save();
     res.json({
