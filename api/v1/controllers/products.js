@@ -17,7 +17,11 @@ module.exports.create = async (req, res) => {
   const product = new Products(req.body);
   try {
     await product.save();
-    res.json({ message: "Product created successfully", product: product });
+    res.json({
+      code: 200,
+      message: "Tao san pham thanh cong",
+      product: product,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error creating product" });
   }
