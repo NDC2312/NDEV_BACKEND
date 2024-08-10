@@ -13,29 +13,11 @@ module.exports.index = async (req, res) => {
 
 // [POST] api/v1/products/create
 module.exports.create = async (req, res) => {
-  const {
-    title,
-    product_category_id,
-    price,
-    discount,
-    position,
-    featured,
-    description,
-    status,
-  } = req.body;
-  const product = new Products({
-    title,
-    product_category_id,
-    price,
-    discount,
-    position,
-    featured,
-    description,
-    status,
-  });
+  console.log(req.body);
+  const product = new Products(req.body);
   try {
     await product.save();
-    res.json({ message: "Product created successfully" });
+    res.json({ message: "Product created successfully", product: product });
   } catch (error) {
     res.status(500).json({ message: "Error creating product" });
   }
