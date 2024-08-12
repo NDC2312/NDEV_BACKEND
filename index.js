@@ -8,8 +8,8 @@ const routesApiVer1 = require("./api/v1/routes/index");
 
 database.connect();
 const app = express();
-app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.json());
 const port = process.env.PORT;
 
 // Router api/V1
