@@ -40,6 +40,7 @@ module.exports.index = async (req, res) => {
   // -- end pagination --
 
   const products = await Products.find(find)
+    .sort(sort)
     .limit(objectPagination.limitProduct)
     .skip(objectPagination.skip);
 
