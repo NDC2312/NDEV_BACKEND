@@ -44,6 +44,7 @@ module.exports.index = async (req, res) => {
     .limit(objectPagination.limitProduct)
     .skip(objectPagination.skip);
 
+  res.set("X-Total-Count", objectPagination.countProducts);
   res.json(products);
 };
 
