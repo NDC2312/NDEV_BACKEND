@@ -70,3 +70,77 @@ module.exports.create = async (req, res) => {
     });
   }
 };
+
+// [PATCH] api/v1/products/change-status/:id
+module.exports.changeStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const status = req.body.status;
+
+    await Products.updateOne(
+      {
+        _id: id,
+      },
+      {
+        status: status,
+      }
+    );
+    res.json({
+      code: 200,
+      message: "Cập nhập trạng thái thành công.",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Cập nhập thất bại.",
+    });
+  }
+};
+
+// [PATCH] api/v1/products/change-multi/
+module.exports.changeMulti = async (req, res) => {
+  const { ids, type, value } = req.body;
+
+  switch (type) {
+    case "status":
+      await Products.updateMany(
+        {
+          _id: { $in: ids },
+        },
+        { status: value }
+      );
+      res.json({
+        code: 200,
+        message: "Cập nhập trạng thái thành công.",
+      });
+      break;
+    case "delete":
+      await Products.updateMany(
+        {
+          _id: { $in: ids },
+        },
+        {
+          deletedAt: new Date(),
+          deleted: true,
+        }
+      );
+      res.json({
+        code: 200,
+        message: "Xóa thành công",
+      });
+      break;
+    case "change-position":
+      res.json({
+        code: 200,
+        message: "Cập nhập vị trí thành công.",
+      });
+      break;
+
+    default:
+      res.json({
+        code: 400,
+        message: "Cập nhập thất bại.",
+      });
+      break;
+  }
+};

@@ -7,4 +7,8 @@ router.get("/", Controller.index);
 
 router.post("/create", Controller.create);
 
+router.patch("/change-status/:id", Controller.changeStatus);
+
+router.patch("/change-multi", Controller.changeMulti);
+
 module.exports = router;
