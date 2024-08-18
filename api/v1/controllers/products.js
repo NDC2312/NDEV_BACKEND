@@ -130,7 +130,7 @@ module.exports.changeMulti = async (req, res) => {
       });
       break;
     case "change-position":
-      for (const item in ids) {
+      for (const item of ids) {
         const { _id, position } = item;
         position = parseInt(position);
         await Products.updateOne(
