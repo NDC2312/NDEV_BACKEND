@@ -111,7 +111,7 @@ module.exports.changeMulti = async (req, res) => {
       );
       res.json({
         code: 200,
-        message: "Cập nhập trạng thái thành công.",
+        message: `Đã cập nhập trạng thái thành công ${ids.length} sản phẩm.`,
       });
       break;
     case "delete":
@@ -126,13 +126,25 @@ module.exports.changeMulti = async (req, res) => {
       );
       res.json({
         code: 200,
-        message: "Xóa thành công",
+        message: `Đã xóa thành công ${ids.length} sản phẩm.`,
       });
       break;
     case "change-position":
+      for (const item in ids) {
+        const [_id, position] = item;
+        position = parseInt(position);
+        await Products.updateOne(
+          {
+            _id: _id,
+          },
+          {
+            position: position,
+          }
+        );
+      }
       res.json({
         code: 200,
-        message: "Cập nhập vị trí thành công.",
+        message: `Đã cập nhập thành công vị trí của ${ids.length} sản phẩm.`,
       });
       break;
 
