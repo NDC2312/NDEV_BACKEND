@@ -160,13 +160,13 @@ module.exports.changeMulti = async (req, res) => {
 // [GET] api/v1/products/detail
 module.exports.detail = async (req, res) => {
   try {
-    const id = req.params._id;
+    const id = req.params.id;
     let find = {
       _id: id,
       deleted: false,
     };
 
-    await Products.find(find);
+    await Products.findOne(find);
     res.json({
       code: 200,
       message: "Chi tiết sản phẩm",
