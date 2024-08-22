@@ -156,3 +156,25 @@ module.exports.changeMulti = async (req, res) => {
       break;
   }
 };
+
+// [GET] api/v1/products/detail
+module.exports.detail = async (req, res) => {
+  try {
+    const id = req.params._id;
+    let find = {
+      _id: id,
+      deleted: false,
+    };
+
+    await Products.find(find);
+    res.json({
+      code: 200,
+      message: "Chi tiết sản phẩm",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Không tìm thấy sản phẩm",
+    });
+  }
+};
