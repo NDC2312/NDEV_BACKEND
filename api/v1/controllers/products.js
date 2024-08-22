@@ -166,11 +166,8 @@ module.exports.detail = async (req, res) => {
       deleted: false,
     };
 
-    await Products.findOne(find);
-    res.json({
-      code: 200,
-      message: "Chi tiết sản phẩm",
-    });
+    const product = await Products.findOne(find);
+    res.json(product);
   } catch (error) {
     res.json({
       code: 400,
