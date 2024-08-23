@@ -175,3 +175,23 @@ module.exports.detail = async (req, res) => {
     });
   }
 };
+
+// [PATCH] api/v1/products/edit
+module.exports.edit = async (req, res) => {
+  try {
+    const id = req.params._id;
+    await Products.updateOne(
+      {
+        _id: id,
+        deleted: false,
+      },
+      req.body
+    );
+    res.json({
+      code: 200,
+      message: "Cập nhật sản phẩm thành công.",
+    });
+  } catch (error) {
+    res.json({ code: 400, message: "Chỉnh sửa thất bại" });
+  }
+};

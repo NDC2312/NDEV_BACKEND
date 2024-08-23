@@ -13,4 +13,6 @@ router.patch("/change-multi", Controller.changeMulti);
 
 router.get("/detail/:id", Controller.detail);
 
+router.patch("/edit/:id", Controller.edit);
+
 module.exports = router;
