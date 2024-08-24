@@ -179,7 +179,7 @@ module.exports.detail = async (req, res) => {
 // [PATCH] api/v1/products/edit/:id
 module.exports.edit = async (req, res) => {
   try {
-    const id = req.params._id;
+    const id = req.params.id;
     await Products.updateOne(
       {
         _id: id,
@@ -198,7 +198,7 @@ module.exports.edit = async (req, res) => {
 // [PATCH] api/v1/products/delete/:id
 module.exports.delete = async (req, res) => {
   try {
-    const id = req.params._id;
+    const id = req.params.id;
     await Products.updateOne(
       {
         _id: id,
