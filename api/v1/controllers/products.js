@@ -198,7 +198,7 @@ module.exports.edit = async (req, res) => {
 // [PATCH] api/v1/products/delete/:id
 module.exports.delete = async (req, res) => {
   try {
-    const id = req.body._id;
+    const id = req.params._id;
     await Products.updateOne(
       {
         _id: id,
