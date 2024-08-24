@@ -15,4 +15,6 @@ router.get("/detail/:id", Controller.detail);
 
 router.patch("/edit/:id", Controller.edit);
 
+router.patch("/delete/:id", Controller.delete);
+
 module.exports = router;

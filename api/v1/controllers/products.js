@@ -157,7 +157,7 @@ module.exports.changeMulti = async (req, res) => {
   }
 };
 
-// [GET] api/v1/products/detail
+// [GET] api/v1/products/detail/:id
 module.exports.detail = async (req, res) => {
   try {
     const id = req.params.id;
@@ -176,14 +176,13 @@ module.exports.detail = async (req, res) => {
   }
 };
 
-// [PATCH] api/v1/products/edit
+// [PATCH] api/v1/products/edit/:id
 module.exports.edit = async (req, res) => {
   try {
     const id = req.params._id;
     await Products.updateOne(
       {
         _id: id,
-        deleted: false,
       },
       req.body
     );
@@ -193,5 +192,29 @@ module.exports.edit = async (req, res) => {
     });
   } catch (error) {
     res.json({ code: 400, message: "Chỉnh sửa thất bại" });
+  }
+};
+
+// [PATCH] api/v1/products/delete/:id
+module.exports.delete = async (req, res) => {
+  try {
+    const id = req.body._id;
+    await Products.updateOne(
+      {
+        _id: id,
+      },
+      {
+        deleted: true,
+      }
+    );
+    res.json({
+      code: 200,
+      message: "Xóa sản phẩm thành công.",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Xóa thất bại.",
+    });
   }
 };
