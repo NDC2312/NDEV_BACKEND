@@ -9,7 +9,13 @@ module.exports.index = async (req, res) => {
     };
     const product = await ProductCategory.find(find);
     const newRecords = createTreeHelper.tree(product);
-    res.json(newRecords);
+    const serializedData = newRecords.map((item) => ({
+      ...item.toJSON(),
+      children: item.children, // Add children property to each node
+    }));
+    console.log(serializedData);
+
+    res.json(serializedData);
   } catch (error) {
     res.json({
       code: 400,
