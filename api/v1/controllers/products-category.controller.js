@@ -16,29 +16,29 @@ module.exports.index = async (req, res) => {
 
     // sort
     let sort = {};
-    if (req.position.sortKey && req.position.sortValue) {
+    if (req.query.sortKey && req.query.sortValue) {
       sort[req.query.sortKey] = req.query.sortValue;
     } else sort.position = "desc";
-    // end sort
+    // -- end sort --
 
     // search
     const objectSearch = searchHelpers(req.query);
     if (req.query.keyword) {
       find.title = objectSearch.regex;
     }
-    // end search
+    // -- end search --
 
     // pagination
-    const countProductsCategory = await ProductCategory.countDocuments(find);
+    const countProducts = await ProductCategory.countDocuments(find);
     const objectPagination = paginationHelpers(
       {
         currentPage: 1,
         limitProduct: 4,
       },
       req.query,
-      countProductsCategory
+      countProducts
     );
-    // end pagination
+    // -- end pagination --
 
     const product = await ProductCategory.find(find)
       .sort(sort)

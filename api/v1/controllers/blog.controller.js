@@ -58,7 +58,7 @@ module.exports.edit = async (req, res) => {
 };
 
 // [GET] api/v1/blog/detail/:id
-module.exports.edit = async (req, res) => {
+module.exports.detail = async (req, res) => {
   try {
     const id = req.params.id;
     let find = {
