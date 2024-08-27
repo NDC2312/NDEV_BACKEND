@@ -40,19 +40,25 @@ module.exports.index = async (req, res) => {
     );
     // -- end pagination --
 
-    const product = await ProductCategory.find(find)
+    const productCategory = await ProductCategory.find(find)
       .sort(sort)
       .limit(objectPagination.limitProduct)
       .skip(objectPagination.skip);
-    const newRecords = createTreeHelper.tree(product);
+    const newProductsCategory = createTreeHelper.tree(productCategory);
 
-    const serializedData = newRecords.map((item) => ({
-      ...item.toJSON(),
-      children: item.children, // Add children property to each node
-    }));
-    console.log(serializedData);
-
-    res.json(serializedData);
+    const createTree = (data) => {
+      const results = [];
+      data.forEach((item) => {
+        const newItem = { ...item._doc };
+        if (item.children && item.children.length > 0) {
+          newItem.children = createTree(item.children);
+        }
+        results.push(newItem);
+      });
+      return results;
+    };
+    const tree = createTree(newProductsCategory);
+    res.json(tree);
   } catch (error) {
     res.json({
       code: 400,
