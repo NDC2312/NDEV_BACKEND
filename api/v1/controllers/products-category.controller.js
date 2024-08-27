@@ -1,5 +1,7 @@
 const ProductCategory = require("../models/products-category.model");
 const createTreeHelper = require("../../../Helper/createTree.helper");
+const searchHelpers = require("../../../Helper/search.helper");
+const paginationHelpers = require("../../../Helper/pagination.helper");
 
 // [GET] api/v1/products-category/
 module.exports.index = async (req, res) => {
@@ -7,8 +9,43 @@ module.exports.index = async (req, res) => {
     let find = {
       deleted: false,
     };
-    const product = await ProductCategory.find(find);
+
+    if (req.query.status) {
+      find.status = req.query.status;
+    }
+
+    // sort
+    let sort = {};
+    if (req.position.sortKey && req.position.sortValue) {
+      sort[req.query.sortKey] = req.query.sortValue;
+    } else sort.position = "desc";
+    // end sort
+
+    // search
+    const objectSearch = searchHelpers(req.query);
+    if (req.query.keyword) {
+      find.title = objectSearch.regex;
+    }
+    // end search
+
+    // pagination
+    const countProductsCategory = await ProductCategory.countDocuments(find);
+    const objectPagination = paginationHelpers(
+      {
+        currentPage: 1,
+        limitProduct: 4,
+      },
+      req.query,
+      countProductsCategory
+    );
+    // end pagination
+
+    const product = await ProductCategory.find(find)
+      .sort(sort)
+      .limit(objectPagination.limitProduct)
+      .skip(objectPagination.skip);
     const newRecords = createTreeHelper.tree(product);
+
     const serializedData = newRecords.map((item) => ({
       ...item.toJSON(),
       children: item.children, // Add children property to each node
