@@ -28,29 +28,14 @@ module.exports.index = async (req, res) => {
     }
     // -- end search --
 
-    // pagination
-    const countProducts = await ProductCategory.countDocuments(find);
-    const objectPagination = paginationHelpers(
-      {
-        currentPage: 1,
-        limitProduct: 4,
-      },
-      req.query,
-      countProducts
-    );
-    // -- end pagination --
-
-    const productCategory = await ProductCategory.find(find)
-      .sort(sort)
-      .limit(objectPagination.limitProduct)
-      .skip(objectPagination.skip);
+    const productCategory = await ProductCategory.find(find).sort(sort);
     const newProductsCategory = createTreeHelper.tree(productCategory);
 
     const createTree = (data) => {
       const results = [];
       data.forEach((item) => {
-        const newItem = { ...item._doc };
-        if (item.children && item.children.length > 0) {
+        const newItem = item._doc;
+        if (item.children) {
           newItem.children = createTree(item.children);
         }
         results.push(newItem);
