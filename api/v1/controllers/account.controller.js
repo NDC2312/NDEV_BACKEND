@@ -4,8 +4,10 @@ const md5 = require("md5");
 
 // [GET] api/v1/account
 module.exports.index = async (req, res) => {
-  const oke = tam.generateString(20);
-  res.json(oke);
+  const account = await Account.find({
+    deleted: false,
+  }).select("-password");
+  res.json(account);
 };
 
 // [POST] api/v1/account/register
