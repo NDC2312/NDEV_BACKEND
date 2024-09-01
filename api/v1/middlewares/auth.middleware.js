@@ -1,6 +1,6 @@
 const Account = require("../models/account.model");
 
-module.exports.requireAuth = async (req, res) => {
+module.exports.requireAuth = async (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1];
     const user = await Account.findOne({
@@ -16,7 +16,7 @@ module.exports.requireAuth = async (req, res) => {
       return;
     }
     req.user = user; // thac mac
-    res.json(user);
+    next();
   } else {
     res.json({
       code: 400,
