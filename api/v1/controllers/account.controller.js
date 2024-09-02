@@ -34,6 +34,7 @@ module.exports.register = async (req, res) => {
       avatar: req.body.avatar,
       role_id: req.body.role_id,
       phone: req.body.phone,
+      status: req.body.status,
     });
 
     await account.save();

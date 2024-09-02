@@ -2,6 +2,7 @@ const Products = require("./products");
 const ProductCategory = require("./products-category.route");
 const Blog = require("./blog.route");
 const Account = require("./account.route");
+const Role = require("./role.route");
 
 module.exports = (app) => {
   const version = "/api/v1";
@@ -9,4 +10,5 @@ module.exports = (app) => {
   app.use(version + "/products-category", ProductCategory);
   app.use(version + "/blog", Blog);
   app.use(version + "/account", Account);
+  app.use(version + "/role", Role);
 };
