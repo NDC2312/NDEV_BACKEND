@@ -7,4 +7,6 @@ router.get("/", controller.index);
 
 router.post("/create", controller.create);
 
+router.patch("/permissions", controller.permissions);
+
 module.exports = router;
