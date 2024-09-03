@@ -44,11 +44,11 @@ module.exports.permissions = async (req, res) => {
           permissions: item.permissions,
         }
       );
-      res.json({
-        code: 200,
-        message: "Cập nhật thành công.",
-      });
     }
+    res.json({
+      code: 200,
+      message: "Cập nhật thành công.",
+    });
   } catch (error) {
     res.json({
       code: 400,
