@@ -1,14 +1,8 @@
 const Account = require("../models/account.model");
+const Role = require("../models/role.model");
+
 const generateHeper = require("../../../Helper/generate.helper");
 const md5 = require("md5");
-
-// [GET] api/v1/account
-module.exports.index = async (req, res) => {
-  const account = await Account.find({
-    deleted: false,
-  }).select("-password");
-  res.json(account);
-};
 
 // [POST] api/v1/account/register
 module.exports.register = async (req, res) => {
@@ -86,4 +80,81 @@ module.exports.login = async (req, res) => {
     message: "Đăng nhập thành công.",
     token: token,
   });
+};
+
+// [GET] api/v1/account
+module.exports.index = async (req, res) => {
+  const accounts = await Account.find({
+    deleted: false,
+  }).select("-password -token");
+  for (const account of account) {
+    const role = await Role.find({
+      _id: account.role_id,
+      deleted: false,
+    });
+    account.role = role;
+  }
+
+  res.json(accounts);
+};
+
+// [GET] api/v1/account/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const account = await Account.find({
+      _id: id,
+      deleted: false,
+    });
+    res.json(account);
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Lấy thông tin thất bại.",
+    });
+  }
+};
+
+// [PATCH] api/v1/account/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Account.updateOne(
+      {
+        _id: id,
+      },
+      req.body
+    );
+    res.json({
+      code: 200,
+      message: "cập nhật thành công.",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Cập nhật thất bại.",
+    });
+  }
+};
+
+// [PATCH] api/v1/account/delete/:id
+module.exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Account.updateOne(
+      {
+        _id: id,
+      },
+      { deleted: true }
+    );
+    res.json({
+      code: 200,
+      message: "Xóa tài khoản khoản thành công.",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Xóa tài khoản khoản thất bại.",
+    });
+  }
 };

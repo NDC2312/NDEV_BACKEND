@@ -10,4 +10,10 @@ router.post("/login", controller.login);
 
 router.get("/", auth.requireAuth, controller.index);
 
+router.get("/detail/:id", auth.requireAuth, controller.detail);
+
+router.patch("/edit/:id", auth.requireAuth, controller.edit);
+
+router.patch("/delete/:id", auth.requireAuth, controller.delete);
+
 module.exports = router;
