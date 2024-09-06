@@ -38,7 +38,6 @@ module.exports.index = async (req, res) => {
     countProducts
   );
   // -- end pagination --
-
   const products = await Products.find(find)
     .sort(sort)
     .limit(objectPagination.limitProduct)
@@ -48,9 +47,7 @@ module.exports.index = async (req, res) => {
     const account = await Account.findOne({
       _id: product.createBy.account_id,
     });
-    console.log("id", product.createBy.account_id);
     if (account) {
-      console.log("account", account.fullName);
       product.accountFullName = account.fullName;
     }
 
@@ -62,8 +59,13 @@ module.exports.index = async (req, res) => {
       updateBy.accountFullName = updateAccount.fullName;
     }
   }
-
-  res.json({ products: products, countTotalPage: countProducts });
+  const newProducts = products.map((product) => {
+    return {
+      ...product.toJSON(),
+      accountFullName: product.accountFullName,
+    };
+  });
+  res.json({ products: newProducts, countTotalPage: countProducts });
 };
 
 // [POST] api/v1/products/create
