@@ -2,6 +2,7 @@ const generateString = require("../../../Helper/generate.helper");
 const searchHelpers = require("../../../Helper/search.helper");
 const paginationHelpers = require("../../../Helper/pagination.helper");
 const Products = require("../models/products.model");
+const Account = require("../models/account.model");
 
 // [GET] api/v1/products
 module.exports.index = async (req, res) => {
@@ -43,6 +44,24 @@ module.exports.index = async (req, res) => {
     .sort(sort)
     .limit(objectPagination.limitProduct)
     .skip(objectPagination.skip);
+
+  for (const product of products) {
+    const account = Account.findOne({
+      _id: product.createBy.account_id,
+    });
+
+    if (account) {
+      product.accountFullName = account.fullName;
+    }
+
+    const updateBy = products.updateBy.slice(-1)[0];
+    if (updateBy) {
+      const account = Account.findOne({
+        _id: updateBy.account_id,
+      });
+      updateBy.accountFullName = account.fullName;
+    }
+  }
 
   res.json({ products: products, countTotalPage: countProducts });
 };
@@ -192,6 +211,7 @@ module.exports.edit = async (req, res) => {
       },
       { ...req.body, $push: { updateBy: updateBy } }
     );
+
     res.json({
       code: 200,
       message: "Cập nhật sản phẩm thành công.",
