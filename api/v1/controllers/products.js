@@ -56,12 +56,14 @@ module.exports.create = async (req, res) => {
     } else {
       req.body.position = req.body.position;
     }
+    req.body.createBy = {
+      account_id: req.user._id,
+    };
     const product = new Products(req.body);
     await product.save();
     res.json({
       code: 200,
       message: "Tạo sản phẩm thành công",
-      product: product,
     });
   } catch (error) {
     res.json({
@@ -180,11 +182,15 @@ module.exports.detail = async (req, res) => {
 module.exports.edit = async (req, res) => {
   try {
     const id = req.params.id;
+    const updateBy = {
+      account_id: req.user._id,
+      updateAt: new Date(),
+    };
     await Products.updateOne(
       {
         _id: id,
       },
-      req.body
+      { ...req.body, $push: { updateBy: updateBy } }
     );
     res.json({
       code: 200,
@@ -199,12 +205,17 @@ module.exports.edit = async (req, res) => {
 module.exports.delete = async (req, res) => {
   try {
     const id = req.params.id;
+    const deleteBy = {
+      account_id: req.user._id,
+      deletedAt: new Date(),
+    };
     await Products.updateOne(
       {
         _id: id,
       },
       {
         deleted: true,
+        deleteBy: deleteBy,
       }
     );
     res.json({
