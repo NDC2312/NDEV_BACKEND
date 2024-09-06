@@ -2,6 +2,7 @@ const searchHelpers = require("../../../Helper/search.helper");
 const paginationHelpers = require("../../../Helper/pagination.helper");
 const Products = require("../models/products.model");
 const Account = require("../models/account.model");
+const ProductsCategory = require("../models/products-category.model");
 
 // [GET] api/v1/products
 module.exports.index = async (req, res) => {
@@ -188,9 +189,18 @@ module.exports.detail = async (req, res) => {
       _id: id,
       deleted: false,
     };
-
     const product = await Products.findOne(find);
-    res.json(product);
+    const productCategory = await ProductsCategory.findOne({
+      _id: product.product_category_id,
+    });
+    if (productCategory) {
+      product.parent_id = productCategory.title;
+    }
+    const newProduct = {
+      ...product.toJSON(),
+      titleParent: product.parent_id,
+    };
+    res.json(newProduct);
   } catch (error) {
     res.json({
       code: 400,
