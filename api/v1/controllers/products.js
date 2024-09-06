@@ -1,4 +1,3 @@
-const generateString = require("../../../Helper/generate.helper");
 const searchHelpers = require("../../../Helper/search.helper");
 const paginationHelpers = require("../../../Helper/pagination.helper");
 const Products = require("../models/products.model");
@@ -46,17 +45,18 @@ module.exports.index = async (req, res) => {
     .skip(objectPagination.skip);
 
   for (const product of products) {
-    const account = Account.findOne({
+    const account = await Account.findOne({
       _id: product.createBy.account_id,
     });
-
+    console.log("id", product.createBy.account_id);
     if (account) {
+      console.log("account", account.fullName);
       product.accountFullName = account.fullName;
     }
 
     const updateBy = product.updateBy.slice(-1)[0];
     if (updateBy) {
-      const updateAccount = Account.findOne({
+      const updateAccount = await Account.findOne({
         _id: updateBy.account_id,
       });
       updateBy.accountFullName = updateAccount.fullName;
