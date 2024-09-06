@@ -54,12 +54,12 @@ module.exports.index = async (req, res) => {
       product.accountFullName = account.fullName;
     }
 
-    const updateBy = products.updateBy.slice(-1)[0];
+    const updateBy = product.updateBy.slice(-1)[0];
     if (updateBy) {
-      const account = Account.findOne({
+      const updateAccount = Account.findOne({
         _id: updateBy.account_id,
       });
-      updateBy.accountFullName = account.fullName;
+      updateBy.accountFullName = updateAccount.fullName;
     }
   }
 
