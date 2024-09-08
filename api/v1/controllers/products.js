@@ -64,6 +64,7 @@ module.exports.index = async (req, res) => {
     return {
       ...product.toJSON(),
       accountFullName: product.accountFullName,
+      updateFullName: product.updateBy.accountFullName,
     };
   });
   res.json({ products: newProducts, countTotalPage: countProducts });

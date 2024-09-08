@@ -160,7 +160,7 @@ module.exports.changeMulti = async (req, res) => {
     const { ids, key, value } = req.body;
     console.log(ids);
     switch (key) {
-      case "change-status":
+      case "status":
         await ProductCategory.updateMany(
           {
             _id: { $in: ids },
@@ -175,7 +175,7 @@ module.exports.changeMulti = async (req, res) => {
         });
         break;
 
-      case "deleteAll":
+      case "delete":
         await ProductCategory.updateMany(
           {
             _id: { $in: ids },
