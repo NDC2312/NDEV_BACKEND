@@ -44,7 +44,7 @@ module.exports.checkPermission = (permission) => {
     } else {
       res.json({
         code: 403,
-        message: "Bạn không có quyền truy cập vào tài nguyên này",
+        message: "Bạn không có quyền truy cập vào tài nguyên này.",
       });
     }
   };
