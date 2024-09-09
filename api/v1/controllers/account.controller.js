@@ -119,7 +119,7 @@ module.exports.detail = async (req, res) => {
     const account = await Account.find({
       _id: id,
       deleted: false,
-    });
+    }).select("-password -token");
     res.json(account);
   } catch (error) {
     res.json({
@@ -133,16 +133,33 @@ module.exports.detail = async (req, res) => {
 module.exports.edit = async (req, res) => {
   try {
     const id = req.params.id;
-    await Account.updateOne(
-      {
-        _id: id,
-      },
-      req.body
-    );
-    res.json({
-      code: 200,
-      message: "cập nhật thành công.",
+    const account = await Account.findOne({
+      _id: { $ne: id },
+      email: req.body.email,
+      deleted: false,
     });
+    if (account) {
+      res.json({
+        code: 400,
+        message: `Email: ${req.body.email} này đã tồn tại.`,
+      });
+    } else {
+      if (req.body.password) {
+        req.body.password = md5(req.body.password);
+      } else {
+        delete req.body.password;
+      }
+      await Account.updateOne(
+        {
+          _id: id,
+        },
+        req.body
+      );
+      res.json({
+        code: 200,
+        message: "cập nhật thành công.",
+      });
+    }
   } catch (error) {
     res.json({
       code: 400,
