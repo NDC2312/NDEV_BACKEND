@@ -212,7 +212,7 @@ module.exports.changeMulti = async (req, res) => {
       default:
         res.json({
           code: 400,
-          message: `Cập nhật thất bại ${ids.length}`,
+          message: `Cập nhật thất bại ${ids.length} sản phẩm.`,
         });
         break;
     }

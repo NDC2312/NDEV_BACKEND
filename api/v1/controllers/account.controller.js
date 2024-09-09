@@ -1,6 +1,5 @@
 const Account = require("../models/account.model");
 const Role = require("../models/role.model");
-
 const generateHeper = require("../../../Helper/generate.helper");
 const md5 = require("md5");
 
@@ -84,18 +83,33 @@ module.exports.login = async (req, res) => {
 
 // [GET] api/v1/account
 module.exports.index = async (req, res) => {
-  const accounts = await Account.find({
-    deleted: false,
-  }).select("-password -token");
-  for (const account of account) {
-    const role = await Role.find({
-      _id: account.role_id,
+  try {
+    const accounts = await Account.find({
       deleted: false,
-    });
-    account.role = role;
-  }
+    }).select("-password -token");
 
-  res.json(accounts);
+    for (const account of accounts) {
+      const role = await Role.findOne({
+        _id: account.role_id,
+        deleted: false,
+      });
+      account.roleTitle = role.title;
+    }
+
+    const newAccounts = accounts.map((account) => {
+      return {
+        ...account.toJSON(),
+        roleTitle: account.roleTitle,
+      };
+    });
+
+    res.json(newAccounts);
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Lấy thông tin người dùng thất bại.",
+    });
+  }
 };
 
 // [GET] api/v1/account/detail/:id
