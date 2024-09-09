@@ -1,4 +1,5 @@
 const Account = require("../models/account.model");
+const Role = require("../models/role.model");
 
 module.exports.requireAuth = async (req, res, next) => {
   if (req.headers.authorization) {
@@ -15,7 +16,13 @@ module.exports.requireAuth = async (req, res, next) => {
       });
       return;
     }
+
+    const role = await Role.findOne({
+      _id: user.role_id,
+    }).select("title permissions");
+
     req.user = user; // thac mac
+    req.permissions = role.permissions;
     next();
   } else {
     res.json({
@@ -23,4 +30,22 @@ module.exports.requireAuth = async (req, res, next) => {
       message: "Vui lòng gửi theo kèm token.",
     });
   }
+};
+
+const hasPermission = (req, permission) => {
+  if (!req.permissions) return false;
+  return req.permissions.includes(permission);
+};
+
+module.exports.checkPermission = (permission) => {
+  return (req, res, next) => {
+    if (hasPermission(req, permission)) {
+      next();
+    } else {
+      res.json({
+        code: 403,
+        message: "Bạn không có quyền truy cập vào tài nguyên này",
+      });
+    }
+  };
 };

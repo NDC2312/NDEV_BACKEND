@@ -70,14 +70,19 @@ module.exports.login = async (req, res) => {
     });
     return;
   }
+  const permissions = await Role.findOne({
+    _id: user.role_id,
+  }).select("permissions");
 
   const token = user.token;
+
   res.cookie("token", token);
 
   res.json({
     code: 200,
     message: "Đăng nhập thành công.",
     token: token,
+    permissions: permissions.permissions,
   });
 };
 
@@ -187,5 +192,72 @@ module.exports.delete = async (req, res) => {
       code: 400,
       message: "Xóa tài khoản khoản thất bại.",
     });
+  }
+};
+
+// [PATCH] api/v1/account/change-status/:id
+module.exports.changeStatus = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const status = req.body.status;
+
+    await Account.updateOne(
+      {
+        _id: id,
+      },
+      {
+        status: status,
+      }
+    );
+    res.json({
+      code: 200,
+      message: "Cập nhập trạng thái thành công.",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Cập nhập thất bại.",
+    });
+  }
+};
+
+// [PATCH] api/v1/account/change-multi/
+module.exports.changeMulti = async (req, res) => {
+  const { ids, type, value } = req.body;
+
+  switch (type) {
+    case "status":
+      await Account.updateMany(
+        {
+          _id: { $in: ids },
+        },
+        { status: value }
+      );
+      res.json({
+        code: 200,
+        message: `Đã cập nhập trạng thái thành công ${ids.length} sản phẩm.`,
+      });
+      break;
+    case "delete":
+      await Account.updateMany(
+        {
+          _id: { $in: ids },
+        },
+        {
+          deletedAt: new Date(),
+          deleted: true,
+        }
+      );
+      res.json({
+        code: 200,
+        message: `Đã xóa thành công ${ids.length} sản phẩm.`,
+      });
+      break;
+    default:
+      res.json({
+        code: 400,
+        message: "Cập nhập thất bại.",
+      });
+      break;
   }
 };

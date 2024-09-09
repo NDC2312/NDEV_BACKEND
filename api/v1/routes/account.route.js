@@ -16,4 +16,8 @@ router.patch("/edit/:id", auth.requireAuth, controller.edit);
 
 router.patch("/delete/:id", auth.requireAuth, controller.delete);
 
+router.patch("/change-status/:id", controller.changeStatus);
+
+router.patch("/change-multi", controller.changeMulti);
+
 module.exports = router;
