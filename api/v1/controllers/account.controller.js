@@ -83,9 +83,37 @@ module.exports.login = async (req, res) => {
     message: "Đăng nhập thành công.",
     token: token,
     permissions: permissions.permissions,
-    user: user,
+    user: user._id,
   });
 };
+
+module.exports.myAccount = async (req, res) => {
+  try {
+    const token = req.body.token;
+    let user = await Account.findOne({
+      token: token,
+      deleted: false,
+    }).select("-password -token");
+
+    const role = await Role.findOne({
+      _id: user.role_id,
+      deleted: false,
+    });
+    user.roleTitle = role.title;
+    user = {
+      ...user.toJSON(),
+      roleTitle: user.roleTitle,
+    };
+    res.json(user);
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Vui lòng gửi kèm theo token",
+    });
+  }
+};
+
+// [GET] api/v1/account/
 
 // [GET] api/v1/account
 module.exports.index = async (req, res) => {

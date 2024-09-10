@@ -19,6 +19,8 @@ router.get(
   controller.index
 );
 
+router.get("/my-account", auth.requireAuth, controller.myAccount);
+
 router.get("/detail/:id", auth.requireAuth, controller.detail);
 
 router.patch(
