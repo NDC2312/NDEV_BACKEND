@@ -8,13 +8,28 @@ router.post("/register", controller.register);
 
 router.post("/login", controller.login);
 
-router.get("/", auth.requireAuth, controller.index);
+router.get(
+  "/",
+  auth.requireAuth,
+  auth.requirePermission("accounts-view"),
+  controller.index
+);
 
 router.get("/detail/:id", auth.requireAuth, controller.detail);
 
-router.patch("/edit/:id", auth.requireAuth, controller.edit);
+router.patch(
+  "/edit/:id",
+  auth.requireAuth,
+  auth.requirePermission("accounts-edit"),
+  controller.edit
+);
 
-router.patch("/delete/:id", auth.requireAuth, controller.delete);
+router.patch(
+  "/delete/:id",
+  auth.requireAuth,
+  auth.requirePermission("accounts-delete"),
+  controller.delete
+);
 
 router.patch("/change-status/:id", controller.changeStatus);
 

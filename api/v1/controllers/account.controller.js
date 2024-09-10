@@ -83,6 +83,7 @@ module.exports.login = async (req, res) => {
     message: "Đăng nhập thành công.",
     token: token,
     permissions: permissions.permissions,
+    user: user,
   });
 };
 

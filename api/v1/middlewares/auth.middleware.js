@@ -32,19 +32,14 @@ module.exports.requireAuth = async (req, res, next) => {
   }
 };
 
-const hasPermission = (req, permission) => {
-  if (!req.permissions) return false;
-  return req.permissions.includes(permission);
-};
-
-module.exports.checkPermission = (permission) => {
+module.exports.requirePermission = (permission) => {
   return (req, res, next) => {
-    if (hasPermission(req, permission)) {
+    if (req.permissions.includes(permission)) {
       next();
     } else {
       res.json({
         code: 403,
-        message: "Bạn không có quyền truy cập vào tài nguyên này.",
+        message: "Bạn không có quyền truy cập đến tài nguyên này.",
       });
     }
   };
