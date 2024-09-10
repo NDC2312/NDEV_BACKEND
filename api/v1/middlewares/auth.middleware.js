@@ -46,6 +46,7 @@ module.exports.requirePermission = (permission) => {
         code: 403,
         message: "Bạn không có quyền truy cập đến tài nguyên này.",
       });
+      return;
     }
   };
 };
