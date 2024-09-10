@@ -89,7 +89,7 @@ module.exports.login = async (req, res) => {
 
 module.exports.myAccount = async (req, res) => {
   try {
-    const token = req.body.token;
+    const token = req.headers.authorization.split(" ")[1];
     let user = await Account.findOne({
       token: token,
       deleted: false,
