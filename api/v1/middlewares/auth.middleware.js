@@ -32,9 +32,14 @@ module.exports.requireAuth = async (req, res, next) => {
   }
 };
 
+const hasPermission = (req, permission) => {
+  if (!req.permissions) return false;
+  return req.permissions.includes(permission);
+};
+
 module.exports.requirePermission = (permission) => {
   return (req, res, next) => {
-    if (req.permissions.includes(permission)) {
+    if (hasPermission(req, permission)) {
       next();
     } else {
       res.json({
