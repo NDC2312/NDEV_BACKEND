@@ -42,8 +42,7 @@ module.exports.requirePermission = (permission) => {
     if (hasPermission(req, permission)) {
       next();
     } else {
-      res.json({
-        code: 403,
+      res.status(403).send({
         message: "Bạn không có quyền truy cập đến tài nguyên này.",
       });
       return;
