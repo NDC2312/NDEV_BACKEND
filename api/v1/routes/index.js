@@ -23,5 +23,5 @@ module.exports = (app) => {
 
   app.use(version + "/role", requireAuth.requireAuth, Role);
 
-  app.use(version + "/customer", requireAuth.requireAuth, Customer);
+  app.use(version + "/customer", Customer);
 };
