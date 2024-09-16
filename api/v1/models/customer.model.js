@@ -10,6 +10,7 @@ const customerSchema = new mongoose.Schema(
       account_id: String,
       created: Date,
     },
+    position: Number,
     deleteAt: {
       account_id: String,
       deleted: Date,

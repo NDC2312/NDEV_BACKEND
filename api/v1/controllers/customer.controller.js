@@ -18,8 +18,13 @@ module.exports.index = async (req, res) => {
       find.phone = search.regex;
     }
 
-    const customer = await Customer.find(find);
-    res.json(customer);
+    const customer = await Customer.find(find).sort({ position: "desc" });
+    const spending = {
+      status: "spending",
+    };
+    const countSpending = await Customer.find(spending).countDocuments();
+
+    res.json({ customer, countSpending });
   } catch (error) {
     res.json({
       code: 400,
@@ -31,6 +36,8 @@ module.exports.index = async (req, res) => {
 // [POST] api/v1/customer/create
 module.exports.create = async (req, res) => {
   try {
+    const position = await Customer.countDocuments();
+    req.body.position = position + 1;
     const customer = new Customer(req.body);
     await customer.save();
     res.json({
