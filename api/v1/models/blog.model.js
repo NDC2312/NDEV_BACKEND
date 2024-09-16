@@ -7,8 +7,20 @@ const blogSchema = new mongoose.Schema(
     status: String,
     position: Number,
     thumbnail: String,
-    createAt: String,
-    updateAt: String,
+    createBy: {
+      account_id: String,
+      createdAt: Date,
+    },
+    updateBy: [
+      {
+        account_id: String,
+        update: Date,
+      },
+    ],
+    deleteBy: {
+      account_id: String,
+      deletedAt: Date,
+    },
     deleted: {
       type: Boolean,
       default: false,

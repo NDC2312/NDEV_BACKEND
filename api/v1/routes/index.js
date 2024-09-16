@@ -3,6 +3,7 @@ const ProductCategory = require("./products-category.route");
 const Blog = require("./blog.route");
 const Account = require("./account.route");
 const Role = require("./role.route");
+const Customer = require("./customer.route");
 const requireAuth = require("../middlewares/auth.middleware");
 
 module.exports = (app) => {
@@ -21,4 +22,6 @@ module.exports = (app) => {
   app.use(version + "/account", Account);
 
   app.use(version + "/role", requireAuth.requireAuth, Role);
+
+  app.use(version + "/customer", requireAuth.requireAuth, Customer);
 };
