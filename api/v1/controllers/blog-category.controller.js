@@ -1,8 +1,8 @@
-const ProductCategory = require("../models/products-category.model");
+const BlogCategory = require("../models/blogs-category.model");
 const createTreeHelper = require("../../../Helper/createTree.helper");
 const searchHelpers = require("../../../Helper/search.helper");
 
-// [GET] api/v1/products-category/
+// [GET] api/v1/blogs-category/
 module.exports.index = async (req, res) => {
   try {
     let find = {
@@ -27,8 +27,8 @@ module.exports.index = async (req, res) => {
     }
     // -- end search --
 
-    const productCategory = await ProductCategory.find(find).sort(sort);
-    const newProductsCategory = createTreeHelper.tree(productCategory);
+    const blogCategory = await BlogCategory.find(find).sort(sort);
+    const newBlogCategory = createTreeHelper.tree(blogCategory);
 
     const createTree = (data) => {
       const results = [];
@@ -41,7 +41,7 @@ module.exports.index = async (req, res) => {
       });
       return results;
     };
-    const tree = createTree(newProductsCategory);
+    const tree = createTree(newBlogCategory);
     res.json(tree);
   } catch (error) {
     res.json({
@@ -51,36 +51,35 @@ module.exports.index = async (req, res) => {
   }
 };
 
-// [POST] api/v1/products-category/create
+// [POST] api/v1/blogs-category/create
 module.exports.create = async (req, res) => {
   try {
     if (req.body.position == "") {
-      req.body.position = (await ProductCategory.countDocuments()) + 1;
+      req.body.position = (await BlogCategory.countDocuments()) + 1;
     } else req.body.position = req.body.position;
-    const product = await new ProductCategory(req.body);
-    await product.save();
+    const blog = await new BlogCategory(req.body);
+    await blog.save();
     res.json({
       code: 200,
-      message: "Tạo sản phẩm thành công.",
+      message: "Tạo danh mục bài viết thành công.",
     });
   } catch (error) {
     res.json({
       code: 400,
-      message: "Tạo sản phẩm thất bại.",
+      message: "Tạo danh mục bài viết thất bại.",
     });
   }
 };
 
-// [PATCH] api/v1/products-category/edit/:id
+// [PATCH] api/v1/blogs-category/edit/:id
 module.exports.edit = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
 
-    await ProductCategory.updateOne({ _id: id }, req.body);
+    await BlogCategory.updateOne({ _id: id }, req.body);
     res.json({
       code: 200,
-      message: "Cập nhật danh mục sản phẩm thành công.",
+      message: "Cập nhật danh mục bài viết thành công.",
     });
   } catch (error) {
     res.json({
@@ -90,12 +89,12 @@ module.exports.edit = async (req, res) => {
   }
 };
 
-// [GET] api/v1/products-category/detail/:id
+// [GET] api/v1/blogs-category/detail/:id
 module.exports.detail = async (req, res) => {
   try {
     const id = req.params.id;
-    const product = await ProductCategory.findOne({ _id: id });
-    res.json(product);
+    const blog = await BlogCategory.findOne({ _id: id });
+    res.json(blog);
   } catch (error) {
     res.json({
       code: 400,
@@ -104,11 +103,11 @@ module.exports.detail = async (req, res) => {
   }
 };
 
-// [PATCH] api/v1/products-category/delete/:id
+// [PATCH] api/v1/blogs-category/delete/:id
 module.exports.delete = async (req, res) => {
   try {
     const id = req.params.id;
-    await ProductCategory.updateOne(
+    await BlogCategory.updateOne(
       {
         _id: id,
       },
@@ -118,7 +117,7 @@ module.exports.delete = async (req, res) => {
     );
     res.json({
       code: 200,
-      message: "Xóa sản phẩm thành công.",
+      message: "Xóa sản bài viết công.",
     });
   } catch (error) {
     res.json({
@@ -128,12 +127,12 @@ module.exports.delete = async (req, res) => {
   }
 };
 
-// [PATCH] api/v1/products-category/change-status/:id
+// [PATCH] api/v1/blogs-category/change-status/:id
 module.exports.changeStatus = async (req, res) => {
   try {
     const id = req.params.id;
     const value = req.body.status;
-    await ProductCategory.updateOne(
+    await BlogCategory.updateOne(
       {
         _id: id,
       },
@@ -153,14 +152,14 @@ module.exports.changeStatus = async (req, res) => {
   }
 };
 
-// [PATCH] api/v1/products-category/change-multi
+// [PATCH] api/v1/blogs-category/change-multi
 module.exports.changeMulti = async (req, res) => {
   try {
     const { ids, key, value } = req.body;
     console.log(ids);
     switch (key) {
       case "status":
-        await ProductCategory.updateMany(
+        await BlogCategory.updateMany(
           {
             _id: { $in: ids },
           },
@@ -175,7 +174,7 @@ module.exports.changeMulti = async (req, res) => {
         break;
 
       case "delete":
-        await ProductCategory.updateMany(
+        await BlogCategory.updateMany(
           {
             _id: { $in: ids },
           },
@@ -193,7 +192,7 @@ module.exports.changeMulti = async (req, res) => {
         for (const item of ids) {
           const [id, position] = item.split("-");
           parseInt(position);
-          await ProductCategory.updateOne(
+          await BlogCategory.updateOne(
             {
               _id: id,
             },

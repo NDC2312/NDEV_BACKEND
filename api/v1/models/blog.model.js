@@ -1,20 +1,28 @@
 const mongoose = require("mongoose");
+const slug = require("mongoose-slug-updater");
+
+mongoose.plugin(slug);
 
 const blogSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
-    status: String,
+    content: String,
     position: Number,
     thumbnail: String,
-    createBy: {
+    status: String,
+    // keyword: [{ type: String }],
+    // tag: [{ type: String }],
+    blog_parent_id: {
+      type: String,
+      default: "",
+    },
+    author: {
       account_id: String,
-      createdAt: Date,
     },
     updateBy: [
       {
         account_id: String,
-        update: Date,
       },
     ],
     deleteBy: {
@@ -25,11 +33,16 @@ const blogSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    slug: {
+      type: String,
+      slug: "title",
+      unique: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const Blog = mongoose.model("blog", blogSchema, "blog");
+const Blog = mongoose.model("blog", blogSchema, "blogs");
 module.exports = Blog;

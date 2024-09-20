@@ -1,6 +1,7 @@
 const Products = require("./products");
 const ProductCategory = require("./products-category.route");
 const Blog = require("./blog.route");
+const BlogCategory = require("./blogs-category.route");
 const Account = require("./account.route");
 const Role = require("./role.route");
 const Customer = require("./customer.route");
@@ -17,7 +18,8 @@ module.exports = (app) => {
     ProductCategory
   );
 
-  app.use(version + "/blog", requireAuth.requireAuth, Blog);
+  app.use(version + "/blogs", requireAuth.requireAuth, Blog);
+  app.use(version + "/blogs-category", requireAuth.requireAuth, BlogCategory);
 
   app.use(version + "/account", Account);
 

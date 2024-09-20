@@ -1,4 +1,7 @@
 const Blog = require("../models/blog.model");
+const searchHelpers = require("../../../Helper/search.helper");
+const paginationHelpers = require("../../../Helper/pagination.helper");
+const Account = require("../models/account.model");
 
 // [GET] api/v1/blog
 module.exports.index = async (req, res) => {
@@ -6,8 +9,62 @@ module.exports.index = async (req, res) => {
     let find = {
       deleted: false,
     };
-    const blog = await Blog.find(find);
-    res.json(blog);
+
+    if (req.query.status) {
+      find.status = req.query.status;
+    }
+
+    if (req.query.keyword) {
+      const search = searchHelpers(req.query);
+      find.title = search.regex;
+    }
+
+    let sort = {};
+    if (req.query.sortKey && req.query.sortValue) {
+      sort[req.query.sortKey] = req.query.sortValue;
+    } else sort.position = "desc";
+
+    // pagination
+    const countBlogs = await Blog.countDocuments(find);
+    const objectPagination = paginationHelpers(
+      {
+        currentPage: 1,
+        limitProduct: 21,
+      },
+      req.query,
+      countBlogs
+    );
+
+    const blogs = await Blog.find(find)
+      .sort(sort)
+      .limit(objectPagination.limitProduct)
+      .skip(objectPagination.skip);
+
+    for (const blog of blogs) {
+      const account = await Account.findOne({
+        _id: blog.author.account_id,
+      });
+      if (account) {
+        blog.accountFullName = account.fullName;
+      }
+
+      const updateBy = blog.updateBy.slice(-1)[0];
+      if (updateBy) {
+        const updateAccount = await Account.findOne({
+          _id: updateBy.account_id,
+        });
+        updateBy.accountFullName = updateAccount.fullName;
+      }
+    }
+
+    const newBlogs = blogs.map((blog) => {
+      return {
+        ...blog.toJSON(),
+        accountFullName: blog.accountFullName,
+        updateFullName: blog.updateBy.accountFullName,
+      };
+    });
+    res.json({ newBlogs, countBlogs });
   } catch (error) {
     res.json({
       code: 400,
@@ -22,16 +79,19 @@ module.exports.create = async (req, res) => {
     if (req.body.position == "") {
       req.body.position = (await Blog.countDocuments()) + 1;
     } else req.body.position = req.body.position;
+    req.body.author = {
+      account_id: req.user._id,
+    };
     const blog = await new Blog(req.body);
     blog.save();
     res.json({
       code: 200,
-      message: "Tạo sản phẩm thành công.",
+      message: "Tạo bài viết thành công.",
     });
   } catch (error) {
     res.json({
       code: 400,
-      message: "Tạo sản phẩm thất bại.",
+      message: "Tạo bài viết thất bại.",
     });
   }
 };
@@ -44,7 +104,10 @@ module.exports.edit = async (req, res) => {
       _id: id,
       deleted: false,
     };
-    await Blog.updateOne(find, req.body);
+    const updateBy = {
+      account_id: req.user._id,
+    };
+    await Blog.updateOne(find, { ...req.body, $push: { updateBy: updateBy } });
     res.json({
       code: 200,
       message: "Cập nhật bài viết thành công.",
@@ -83,8 +146,13 @@ module.exports.delete = async (req, res) => {
       _id: id,
       deleted: false,
     };
+    const deleteBy = {
+      account_id: req.user._id,
+      deletedAt: new Date(),
+    };
     await Blog.updateOne(find, {
       deleted: true,
+      $push: { deleteBy: deleteBy },
     });
     res.json({
       code: 200,
@@ -93,7 +161,7 @@ module.exports.delete = async (req, res) => {
   } catch (error) {
     res.json({
       code: 400,
-      message: "Xóa thất bại .",
+      message: "Xóa bài viết thất bại .",
     });
   }
 };
@@ -112,12 +180,12 @@ module.exports.changeStatus = async (req, res) => {
     });
     res.json({
       code: 200,
-      message: "Thay đổi trạng thái thành công.",
+      message: "Thay đổi trạng thái bài viết thành công.",
     });
   } catch (error) {
     res.json({
       code: 400,
-      message: "Thay đổi trạng thái thất bại.",
+      message: "Thay đổi trạng thái bài viết thất bại.",
     });
   }
 };
@@ -128,7 +196,7 @@ module.exports.changeMulti = async (req, res) => {
     const { ids, key, value } = req.body;
 
     switch (key) {
-      case "change-status":
+      case "status":
         await Blog.updateMany(
           {
             _id: { $in: ids },
@@ -142,7 +210,7 @@ module.exports.changeMulti = async (req, res) => {
           message: `Thay đổi trạng thái thành công ${ids.length} bài viết`,
         });
         break;
-      case "deleteAll":
+      case "delete":
         await Blog.updateMany(
           {
             _id: { $in: ids },
